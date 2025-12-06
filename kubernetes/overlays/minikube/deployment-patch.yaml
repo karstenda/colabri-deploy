@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-app
+  namespace: colabri
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: colabri-app
+        image: colabri-app:local
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

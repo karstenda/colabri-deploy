@@ -1,0 +1,33 @@
+# Secrets and sensitive data
+*.key
+*.pem
+*.crt
+secrets.yaml
+*secret*.yaml
+
+# Environment files
+.env
+.env.local
+*.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Logs
+*.log
+
+# Helm charts (if added later)
+charts/*.tgz
