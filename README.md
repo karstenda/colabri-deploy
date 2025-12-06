@@ -4,6 +4,8 @@ This project contains Kubernetes configurations and scripts to deploy the Colabr
 
 ## Quick Start
 
+> **Note**: Before deploying, update the container image in `kubernetes/base/deployment.yaml` to use your actual image, or use Kustomize image transformers. See the [Configuration Guide](docs/CONFIGURATION.md) for details.
+
 ### Deploy to Minikube (Local Development)
 
 ```bash

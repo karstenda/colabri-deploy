@@ -64,20 +64,39 @@ This script will:
 - Create a GKE cluster with autoscaling
 - Configure kubectl to use the new cluster
 
-#### Step 2: Configure Secrets (Optional)
+#### Step 2: Configure Your Container Image
+
+Update the deployment to use your actual container image:
+
+```bash
+# Edit kubernetes/base/deployment.yaml
+# Replace PROJECT_ID with your actual GCP project ID
+# Replace v1.0.0 with your actual image tag
+nano kubernetes/base/deployment.yaml
+```
+
+Or use Kustomize image transformer by adding to `kubernetes/overlays/gke/kustomization.yaml`:
+```yaml
+images:
+- name: gcr.io/PROJECT_ID/colabri-app
+  newName: gcr.io/my-actual-project/colabri-app
+  newTag: v1.0.0
+```
+
+#### Step 3: Configure Secrets (Optional)
 
 If your application requires secrets:
 
 ```bash
 # Copy the example secret file
-cp ../kubernetes/base/secret.yaml.example ../kubernetes/base/secret.yaml
+cp kubernetes/base/secret.yaml.example kubernetes/base/secret.yaml
 
 # Edit and add your base64-encoded secrets
 # Example: echo -n 'my-password' | base64
-nano ../kubernetes/base/secret.yaml
+nano kubernetes/base/secret.yaml
 ```
 
-#### Step 3: Deploy Application
+#### Step 4: Deploy Application
 
 ```bash
 ./deploy-gke.sh [project-id] [cluster-name] [region]
@@ -88,7 +107,7 @@ Example:
 ./deploy-gke.sh my-gcp-project colabri-cluster us-central1
 ```
 
-#### Step 4: Verify Deployment
+#### Step 5: Verify Deployment
 
 ```bash
 # Check all resources
@@ -267,9 +286,45 @@ kubectl port-forward svc/colabri-service 8080:80 -n colabri
 
 ### Common Issues
 
-1. **ImagePullBackOff**: Check that the image exists and credentials are configured
-2. **CrashLoopBackOff**: Check application logs for errors
-3. **Pending Pods**: Check resource availability with `kubectl describe pod`
+1. **ImagePullBackOff**: Image cannot be pulled from registry
+   ```bash
+   # Check pod details to see the exact error
+   kubectl describe pod <pod-name> -n colabri
+   
+   # Verify the image exists in your registry
+   gcloud container images list --repository=gcr.io/YOUR-PROJECT-ID
+   
+   # Check if credentials are configured (for GKE)
+   kubectl get serviceaccount default -n colabri -o yaml
+   
+   # For private registries, create an image pull secret
+   kubectl create secret docker-registry regcred \
+     --docker-server=gcr.io \
+     --docker-username=_json_key \
+     --docker-password="$(cat key.json)" \
+     -n colabri
+   ```
+
+2. **CrashLoopBackOff**: Application is crashing repeatedly
+   ```bash
+   # Check application logs for errors
+   kubectl logs <pod-name> -n colabri
+   
+   # Check previous container logs if pod restarted
+   kubectl logs <pod-name> -n colabri --previous
+   ```
+
+3. **Pending Pods**: Pods cannot be scheduled
+   ```bash
+   # Check why pod is pending
+   kubectl describe pod <pod-name> -n colabri
+   
+   # Check node resources
+   kubectl top nodes
+   
+   # Check if there are enough nodes
+   kubectl get nodes
+   ```
 
 ## Monitoring and Maintenance
 

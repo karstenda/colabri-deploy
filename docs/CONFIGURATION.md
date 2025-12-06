@@ -61,13 +61,24 @@ kubectl apply -f kubernetes/base/secret.yaml
 
 ### GKE Deployment
 
-Edit `kubernetes/base/deployment.yaml` to use your container image:
+**Option 1**: Edit `kubernetes/base/deployment.yaml` directly:
 
 ```yaml
 containers:
 - name: colabri-app
   image: gcr.io/YOUR-PROJECT-ID/colabri-app:v1.0.0
 ```
+
+**Option 2** (Recommended): Use Kustomize image transformer in `kubernetes/overlays/gke/kustomization.yaml`:
+
+```yaml
+images:
+- name: gcr.io/PROJECT_ID/colabri-app
+  newName: gcr.io/my-actual-project/colabri-app
+  newTag: v1.0.0
+```
+
+This allows you to keep the base manifests generic and override the image in environment-specific overlays.
 
 ### Minikube Deployment
 
