@@ -54,7 +54,8 @@ gcloud container clusters create "$CLUSTER_NAME" \
     --enable-ip-alias \
     --network=default \
     --subnetwork=default \
-    --enable-stackdriver-kubernetes \
+    --enable-cloud-logging \
+    --enable-cloud-monitoring \
     --addons=HorizontalPodAutoscaling,HttpLoadBalancing
 
 # Get cluster credentials

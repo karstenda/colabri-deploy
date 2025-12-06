@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: colabri-app
-        image: gcr.io/PROJECT_ID/colabri-app:latest
+        image: gcr.io/PROJECT_ID/colabri-app:v1.0.0
         ports:
         - containerPort: 8080
           name: http

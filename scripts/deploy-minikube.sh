@@ -46,9 +46,13 @@ echo "Enabling minikube addons..."
 minikube addons enable ingress
 minikube addons enable metrics-server
 
+# Get the script directory and navigate to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Apply Kubernetes manifests using Kustomize
 echo "Applying Kubernetes manifests..."
-kubectl apply -k ../kubernetes/overlays/minikube
+kubectl apply -k "$PROJECT_ROOT/kubernetes/overlays/minikube"
 
 # Wait for deployment to be ready
 echo "Waiting for deployment to be ready..."

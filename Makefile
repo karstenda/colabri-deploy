@@ -1,4 +1,4 @@
-.PHONY: help validate build-gke build-minikube deploy-gke deploy-minikube status teardown-gke teardown-minikube
+.PHONY: help validate build-gke build-minikube deploy-gke deploy-minikube setup-gke status teardown-gke teardown-minikube test-scripts clean
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'

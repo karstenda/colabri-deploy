@@ -45,9 +45,13 @@ gcloud container clusters get-credentials "$CLUSTER_NAME" --region="$REGION"
 echo "Verifying cluster connection..."
 kubectl cluster-info
 
+# Get the script directory and navigate to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Apply Kubernetes manifests using Kustomize
 echo "Applying Kubernetes manifests..."
-kubectl apply -k ../kubernetes/overlays/gke
+kubectl apply -k "$PROJECT_ROOT/kubernetes/overlays/gke"
 
 # Wait for deployment to be ready
 echo "Waiting for deployment to be ready..."

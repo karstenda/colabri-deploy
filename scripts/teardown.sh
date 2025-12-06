@@ -41,10 +41,14 @@ read -r
 # Delete all resources in the namespace
 echo "Deleting resources in namespace '$NAMESPACE'..."
 
+# Get the script directory and navigate to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 if [ "$ENVIRONMENT" == "gke" ]; then
-    kubectl delete -k ../kubernetes/overlays/gke --ignore-not-found=true
+    kubectl delete -k "$PROJECT_ROOT/kubernetes/overlays/gke" --ignore-not-found=true
 elif [ "$ENVIRONMENT" == "minikube" ]; then
-    kubectl delete -k ../kubernetes/overlays/minikube --ignore-not-found=true
+    kubectl delete -k "$PROJECT_ROOT/kubernetes/overlays/minikube" --ignore-not-found=true
 else
     # Delete namespace (this will delete all resources in it)
     kubectl delete namespace "$NAMESPACE" --ignore-not-found=true
