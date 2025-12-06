@@ -7,8 +7,12 @@ This project contains Kubernetes configurations and scripts to deploy the Colabr
 ### Deploy to Minikube (Local Development)
 
 ```bash
+# Using scripts
 cd scripts
 ./deploy-minikube.sh
+
+# Or using Makefile
+make deploy-minikube
 ```
 
 ### Deploy to GKE (Production)
@@ -20,6 +24,10 @@ cd scripts
 
 # 2. Deploy application
 ./deploy-gke.sh my-project colabri-cluster us-central1
+
+# Or using Makefile
+make setup-gke PROJECT_ID=my-project CLUSTER_NAME=colabri-cluster REGION=us-central1
+make deploy-gke PROJECT_ID=my-project CLUSTER_NAME=colabri-cluster REGION=us-central1
 ```
 
 ## Project Structure
@@ -32,7 +40,10 @@ cd scripts
 
 ## Documentation
 
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for comprehensive deployment instructions, configuration options, and troubleshooting.
+- 📚 [Quick Start Guide](docs/QUICK-START.md) - Get started in minutes
+- 📖 [Deployment Guide](docs/DEPLOYMENT.md) - Comprehensive deployment instructions
+- ⚙️ [Configuration Guide](docs/CONFIGURATION.md) - Configuration options and management
+- 🤝 [Contributing](CONTRIBUTING.md) - How to contribute to this project
 
 ## Features
 
@@ -55,7 +66,21 @@ See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for comprehensive deployment instruction
 - `setup-gke-cluster.sh` - Create a new GKE cluster
 - `deploy-gke.sh` - Deploy to Google Kubernetes Engine
 - `deploy-minikube.sh` - Deploy to local Minikube
+- `status.sh` - Check deployment status
 - `teardown.sh` - Remove deployment from cluster
+
+## Make Commands
+
+Run `make help` to see all available commands:
+
+```bash
+make validate          # Validate all YAML files
+make build-gke         # Build GKE manifests with kustomize
+make build-minikube    # Build Minikube manifests with kustomize
+make deploy-minikube   # Deploy to Minikube
+make status            # Show deployment status
+make test-scripts      # Test all shell scripts
+```
 
 ## Getting Help
 
