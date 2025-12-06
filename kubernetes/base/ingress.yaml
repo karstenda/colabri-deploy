@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: colabri-ingress
+  namespace: colabri
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: "nginx"
+  tls:
+  - hosts:
+    - colabri.example.com
+    secretName: colabri-tls-cert
+  rules:
+  - host: colabri.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: colabri-service
+            port:
+              number: 80

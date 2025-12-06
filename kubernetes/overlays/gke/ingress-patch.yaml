@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: colabri-ingress
+  namespace: colabri
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "colabri-ip"
+    networking.gke.io/managed-certificates: "colabri-cert"
+spec:
+  ingressClassName: "gce"
