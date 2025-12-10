@@ -3,10 +3,13 @@ kind: Ingress
 metadata:
   name: colabri-ingress
   namespace: colabri
+  annotations:
+    cert-manager.io/cluster-issuer: null
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
-  ingressClassName: "nginx"
+  tls: null
   rules:
-    - host: app.colabri.cloud
+    - host: app.colabri-local.cloud
       http:
         paths:
           - path: /

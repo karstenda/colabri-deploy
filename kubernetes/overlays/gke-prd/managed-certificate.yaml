@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: colabri-cert
+  namespace: colabri
+spec:
+  domains:
+    - app.colabri.cloud

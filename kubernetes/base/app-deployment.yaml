@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-app
+  namespace: colabri
+  labels:
+    app: colabri-app
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: colabri-app
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: colabri-app
+        component: backend
+    spec:
+      containers:
+        - name: colabri-app
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1e
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: ENVIRONMENT
+              value: "release"
+            - name: SECURE_COOKIES
+              value: "true"
+            - name: CLOUD_POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: CLOUD_SERVICE_NAME
+              value: "colabri-app"
+            - name: DB_DRIVER
+              value: "postgres"
+            - name: OAUTH_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-domain
+            - name: OAUTH_WEB_APP_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-web-app-client-id
+            - name: OAUTH_WEB_APP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-web-app-client-secret
+            - name: OAUTH_API_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-api-client-id
+            - name: OAUTH_API_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-api-client-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-app
+  namespace: colabri
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: colabri-app
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: db-url
+            - name: SECURE_COOKIES
+              value: "true"
+            - name: CLOUD_AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: cloud-auth-jwt-secret
+            - name: OAUTH_WEB_APP_CALLBACK_URL
+              value: "https://app.colabri.cloud/auth/callback"
+            - name: GCP_PROJECT_ID
+              value: colabri-prd
+            - name: GCP_SERVICE_ACCOUNT_KEY_PATH
+              value: /var/secrets/google/gcp-sa-key.json
+          volumeMounts:
+            - name: gcp-credentials
+              mountPath: /var/secrets/google
+              readOnly: true
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      volumes:
+        - name: gcp-credentials
+          secret:
+            secretName: colabri-secrets
+            items:
+              - key: gcp-sa-key.json
+                path: gcp-sa-key.json

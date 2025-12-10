@@ -12,9 +12,45 @@ This project contains Kubernetes configurations and scripts to deploy the Colabr
 # Using scripts
 cd scripts
 ./deploy-minikube.sh
+```
 
-# Or using Makefile
-make deploy-minikube
+Usefull commands:
+
+Restart the cluster
+
+```bash
+kubectl apply -k kubernetes/overlays/minikube
+kubectl rollout restart deployment colabri-app -n colabri
+```
+
+List pods on the cluster
+
+```bash
+kubectl get pods -n colabri -w
+```
+
+List services on the cluster
+
+```bash
+kubectl get svc -n colabri
+```
+
+See logs of pod
+
+```bash
+kubectl logs <pod> -n colabri
+```
+
+See last logs of pods
+
+```bash
+kubectl logs -n colabri -l app=colabri-app --tail=50
+```
+
+Transfer an image to Minikube
+
+```bash
+minikube image load colabri-app:latest
 ```
 
 ### Deploy to GKE (Production)
