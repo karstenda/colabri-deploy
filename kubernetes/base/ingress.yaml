@@ -16,3 +16,27 @@ spec:
                 name: colabri-app-service
                 port:
                   number: 80
+    - host: doc.colabri.cloud
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: colabri-doc-service
+                port:
+                  number: 80
+          - path: /swagger
+            pathType: Prefix
+            backend:
+              service:
+                name: colabri-doc-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: colabri-doc-service
+                port:
+                  number: 9001

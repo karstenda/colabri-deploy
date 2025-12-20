@@ -70,24 +70,20 @@ minikube addons enable metrics-server
 minikube addons enable dashboard
 ```
 
-### 4. Configure Docker Environment (Optional)
-
-To use Minikube's Docker daemon directly:
-
-```powershell
-minikube docker-env | Invoke-Expression
-```
-
-This allows you to build images directly in Minikube without pushing to a registry.
-
 ## Deployment
 
 ### Deploy the Application
 
+Start Minikube (if not already) and tell kubernetes to deploy on Minikube. Minikube will set itself as the current kubernetes cluster context.
+
+```powershell
+minikube start
+```
+
 Apply the Minikube-specific Kubernetes manifests:
 
 ```powershell
-kubectl apply -k kubernetes/overlays/minikube
+kubectl apply -k kubernetes/overlays/minikube-local
 ```
 
 ### Wait for Deployment to Complete
@@ -200,6 +196,69 @@ Configure your Windows hosts file to map the hostname:
 - Save and close the file
 
 Then access at: http://app.colabri-local.cloud
+
+## Enabling HTTPS (Required for Secure Cookies)
+
+Chrome (and most modern browsers) only send cookies marked `SameSite=None` when they also have the `Secure` flag, which means the cookie is delivered exclusively over HTTPS. Follow the steps below to terminate TLS inside Minikube so the local domains resolve over `https://`.
+
+1. **Create & trust a local certificate authority**
+
+   ```powershell
+   choco install mkcert    # or use winget/brew
+   mkcert -install         # adds the local CA to Windows trust store
+   ```
+
+2. **Generate certs for the local domains**
+
+   ```powershell
+   mkcert app.colabri-local.cloud doc.colabri-local.cloud "*.colabri-local.cloud"
+   ```
+
+   Mkcert writes a `.pem` (certificate) and `.key` file in your current directory. Rename them if you want, e.g., `colabri-local.crt` and `colabri-local.key`.
+
+3. **Create the Kubernetes TLS secret manifest (`kubernetes/overlays/minikube-local/tls-secrets.yaml`)**
+
+   1. Base64-encode the generated cert/key (PowerShell example):
+
+      ```powershell
+      $crt = [Convert]::ToBase64String([IO.File]::ReadAllBytes('colabri-local.crt'))
+      $key = [Convert]::ToBase64String([IO.File]::ReadAllBytes('colabri-local.key'))
+      ```
+
+   2. Paste the values into the checked-in secret manifest:
+
+      ```yaml
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: colabri-local-tls
+        namespace: colabri
+      type: kubernetes.io/tls
+      data:
+        tls.crt: <base64 from $crt>
+        tls.key: <base64 from $key>
+      ```
+
+   The minikube overlay already references `tls-secrets.yaml` in its `kustomization.yaml`, so running `kubectl apply -k kubernetes/overlays/minikube-local` creates or updates the TLS secret automatically.
+
+4. **Reapply the overlay so the ingress picks up TLS**
+
+   ```powershell
+   kubectl apply -k kubernetes/overlays/minikube-local
+   ```
+
+5. **Map the hosts file to the Minikube IP (HTTPS works for both subdomains)**
+
+   ```
+   192.168.49.2  app.colabri-local.cloud doc.colabri-local.cloud
+   ```
+
+6. **Access everything over HTTPS**
+
+   - `https://app.colabri-local.cloud`
+   - Client-side code should connect to `wss://doc.colabri-local.cloud/<workspaceId>`
+
+With TLS active, cookies marked `SameSite=None; Secure` are accepted locally, so the doc service receives the `auth_token` cookie during WebSocket handshakes.
 
 ## Managing the Deployment
 

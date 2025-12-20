@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: colabri-app
-          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1e
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1j
           ports:
             - containerPort: 8080
               name: http
@@ -39,6 +39,14 @@ spec:
                   fieldPath: metadata.name
             - name: CLOUD_SERVICE_NAME
               value: "colabri-app"
+            - name: CLOUD_SERVICE_DOMAIN
+              value: "app.colabri.cloud"
+            - name: CLOUD_DOC_SERVICE_DOMAIN
+              value: "doc.colabri.cloud"
+            - name: CLOUD_ROOT_DOMAIN
+              value: "colabri.cloud"
+            - name: CLOUD_CORS_ORIGINS
+              value: "https://*.colabri.cloud,https://colabri.cloud"
             - name: DB_DRIVER
               value: "postgres"
             - name: OAUTH_DOMAIN

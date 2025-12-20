@@ -9,14 +9,3 @@ metadata:
     networking.gke.io/managed-certificates: "colabri-cert"
 spec:
   ingressClassName: null
-  rules:
-    - host: app.colabri.cloud
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: colabri-app-service
-                port:
-                  number: 80

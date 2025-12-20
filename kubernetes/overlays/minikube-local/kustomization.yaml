@@ -1,21 +1,28 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: colabri
-
 resources:
   - ../../base
+  - secrets.yaml
+  - tls-secrets.yaml
 
 patches:
   - path: app-deployment-patch.yaml
-  - path: app-service-patch.yaml
+  - path: doc-deployment-patch.yaml
   - path: ingress-patch.yaml
+    target:
+      group: networking.k8s.io
+      version: v1
+      kind: Ingress
+      name: colabri-ingress
+      namespace: colabri
   - path: ingress-controller-patch.yaml
     target:
       kind: Service
       name: ingress-nginx-controller
       namespace: ingress-nginx
-
-replicas:
-  - name: colabri-app
-    count: 1
+  - path: coredns-configmap.yaml
+    target:
+      kind: ConfigMap
+      name: coredns
+      namespace: kube-system

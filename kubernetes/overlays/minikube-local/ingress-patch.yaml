@@ -1,21 +1,21 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: colabri-ingress
-  namespace: colabri
-  annotations:
-    cert-manager.io/cluster-issuer: null
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  tls: null
-  rules:
-    - host: app.colabri-local.cloud
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: colabri-app-service
-                port:
-                  number: 80
+- op: replace
+  path: /spec/rules/0/host
+  value: app.colabri-local.cloud
+- op: replace
+  path: /spec/rules/1/host
+  value: doc.colabri-local.cloud
+- op: add
+  path: /metadata/annotations
+  value:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/websocket-services: "colabri-doc-service"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$remote_addr"
+- op: add
+  path: /spec/tls
+  value:
+    - hosts:
+        - app.colabri-local.cloud
+        - doc.colabri-local.cloud
+      secretName: colabri-local-tls

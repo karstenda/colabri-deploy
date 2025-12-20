@@ -5,4 +5,6 @@ metadata:
   namespace: colabri
 spec:
   domains:
+    - colabri.cloud
     - app.colabri.cloud
+    - doc.colabri.cloud

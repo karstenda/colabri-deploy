@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: colabri-app
-          image: colabri-app:v0.0.1d
+          image: colabri-app:v0.0.1k
           imagePullPolicy: IfNotPresent
           env:
             - name: DB_URL
@@ -18,14 +18,22 @@ spec:
                   name: colabri-secrets
                   key: db-url
             - name: SECURE_COOKIES
-              value: "false"
+              value: "true"
             - name: CLOUD_AUTH_JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: colabri-secrets
                   key: cloud-auth-jwt-secret
+            - name: CLOUD_SERVICE_DOMAIN
+              value: "app.colabri-local.cloud"
+            - name: CLOUD_DOC_SERVICE_DOMAIN
+              value: "doc.colabri-local.cloud"
+            - name: CLOUD_ROOT_DOMAIN
+              value: "colabri-local.cloud"
+            - name: CLOUD_CORS_ORIGINS
+              value: "https://*.colabri-local.cloud,https://colabri-local.cloud"
             - name: OAUTH_WEB_APP_CALLBACK_URL
-              value: "http://app.colabri-local.cloud/auth/callback"
+              value: "https://app.colabri-local.cloud/auth/callback"
             - name: GCP_PROJECT_ID
               value: colabri-local
             - name: GCP_SERVICE_ACCOUNT_KEY_PATH

@@ -1,39 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: colabri-app
+  name: colabri-doc
   namespace: colabri
 spec:
   replicas: 1
   template:
     spec:
       containers:
-        - name: colabri-app
+        - name: colabri-doc
+          image: colabri-doc:v0.0.1e
+          imagePullPolicy: IfNotPresent
           env:
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
                   name: colabri-secrets
                   key: db-url
-            - name: SECURE_COOKIES
-              value: "true"
+            - name: CLOUD_SERVICE_DOMAIN
+              value: "doc.colabri-local.cloud"
+            - name: CLOUD_APP_SERVICE_DOMAIN
+              value: "colabri-app-service"
+            - name: CLOUD_ROOT_DOMAIN
+              value: "colabri-local.cloud"
+            - name: CLOUD_CORS_ORIGINS
+              value: "https://*.colabri-local.cloud,https://colabri-local.cloud"
             - name: CLOUD_AUTH_JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: colabri-secrets
                   key: cloud-auth-jwt-secret
-            - name: CLOUD_SERVICE_DOMAIN
-              value: "app.colabri.cloud"
-            - name: CLOUD_DOC_SERVICE_DOMAIN
-              value: "doc.colabri.cloud"
-            - name: CLOUD_ROOT_DOMAIN
-              value: "colabri.cloud"
-            - name: CLOUD_CORS_ORIGINS
-              value: "https://*.colabri.cloud,https://colabri.cloud"
-            - name: OAUTH_WEB_APP_CALLBACK_URL
-              value: "https://app.colabri.cloud/auth/callback"
             - name: GCP_PROJECT_ID
-              value: colabri-prd
+              value: colabri-local
             - name: GCP_SERVICE_ACCOUNT_KEY_PATH
               value: /var/secrets/google/gcp-sa-key.json
           volumeMounts:
@@ -42,11 +40,11 @@ spec:
               readOnly: true
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "1Gi"
-              cpu: "1000m"
+              memory: "256Mi"
+              cpu: "250m"
       volumes:
         - name: gcp-credentials
           secret:
