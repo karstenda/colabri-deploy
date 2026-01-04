@@ -8,7 +8,28 @@ This guide covers deploying the Colabri platform to Google Kubernetes Engine (GK
 - **kubectl** installed
 - The **gke-gcloud-auth-plugin** installed
 - Access to the `colabri-prd` GCP project
+- The GCS Fuse CSI driver enabled in the GCP project
 - A running GKE cluster in the project
+
+## Secrets
+
+The overlay expects the file `kubernetes/overlays/gke-prd/secrets.yaml` to exist **before** you run `kubectl apply`. The canonical copy of that file lives in Secret Manager inside the `colabri-prd` project under the `colabri-app_app_env` secret. Use `gcloud` to materialize the latest version locally (adjust the output path if you keep the file elsewhere):
+
+### Linux / macOS
+
+```bash
+cd src
+gcloud secrets versions access latest --secret="secrets_yaml" --format='get(payload.data)' | tr '_-' '/+' | base64 -d > kubernetes/overlays/gke-prd/secrets.yaml
+```
+
+### Windows
+
+```powershell
+cd src
+(gcloud secrets versions access latest --secret="secrets_yaml" --format='get(payload.data)') -replace '_', '/' -replace '-', '+' | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) } | Out-File kubernetes/overlays/gke-prd/secrets.yaml -Encoding UTF8
+```
+
+> The `tr` / `-replace` steps normalize the character set before decoding because Secret Manager returns URL-safe base64.
 
 ## Initial Setup
 
@@ -27,26 +48,28 @@ gcloud config set project colabri-prd
 
 ### 3. Connect to Your GKE Cluster
 
-Make sure the right kubernetes cluster context is set:
+First install the gke-gcloud-auth-plugin so we can authenticate to the cluster.
 
 ```powershell
 gcloud components install gke-gcloud-auth-plugin
+```
+
+Now you can get the credentials to connect to your project and cluster.
+
+```powershell
 gcloud config set project colabri-prd
-```
-
-Replace `CLUSTER-NAME` and `REGION` with your actual cluster details:
-
-```powershell
-gcloud container clusters get-credentials CLUSTER-NAME --region=REGION
-```
-
-Example:
-
-```powershell
 gcloud container clusters get-credentials colabri-cluster --region=europe-west3
 ```
 
-### 4. Verify Connection
+### 4. Enable the GCS Fuse CSI Driver
+
+To enable the GCS Fuse CSI driver on the cluster, run the following command:
+
+```powershell
+gcloud container clusters update colabri-cluster --region europe-west3 --update-addons=GcsFuseCsiDriver=ENABLED
+```
+
+### 5. Verify Connection
 
 ```powershell
 kubectl cluster-info
@@ -54,6 +77,15 @@ kubectl get nodes
 ```
 
 ## Deployment
+
+### Set the kubectl context
+
+Start by setting the kubernetes context to the colabri cluster.
+
+```powershell
+gcloud config set project colabri-prd
+gcloud container clusters get-credentials colabri-cluster --region=europe-west3
+```
 
 ### Deploy the Application
 
@@ -171,13 +203,13 @@ gcloud auth configure-docker europe-west3-docker.pkg.dev
 
 ```powershell
 # Format: REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE-NAME:TAG
-docker tag colabri-app:v1.2.3 europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v1.2.3
+docker tag colabri-app:latest europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v1.2.3
 ```
 
 3. **Push the image to Artifact Registry:**
 
 ```powershell
-docker push europe-west3-docker.pkg.dev/colabri-prd/colabri-repo/colabri-app:v1.2.3
+docker push europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v1.2.3
 ```
 
 ## Updating the Application

@@ -9,6 +9,7 @@ resources:
 patches:
   - path: app-deployment-patch.yaml
   - path: doc-deployment-patch.yaml
+  - path: spell-deployment-patch.yaml
   - path: ingress-patch.yaml
     target:
       group: networking.k8s.io

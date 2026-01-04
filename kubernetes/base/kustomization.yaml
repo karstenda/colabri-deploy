@@ -8,4 +8,6 @@ resources:
   - app-service.yaml
   - doc-deployment.yaml
   - doc-service.yaml
+  - spell-deployment.yaml
+  - spell-service.yaml
   - coredns-configmap.yaml

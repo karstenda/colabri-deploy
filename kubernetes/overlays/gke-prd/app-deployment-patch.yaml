@@ -25,7 +25,9 @@ spec:
             - name: CLOUD_SERVICE_DOMAIN
               value: "app.colabri.cloud"
             - name: CLOUD_DOC_SERVICE_DOMAIN
-              value: "doc.colabri.cloud"
+              value: "colabri-doc-service"
+            - name: CLOUD_SPELL_SERVICE_DOMAIN
+              value: "colabri-spell-service"
             - name: CLOUD_ROOT_DOMAIN
               value: "colabri.cloud"
             - name: CLOUD_CORS_ORIGINS
@@ -39,6 +41,10 @@ spec:
           volumeMounts:
             - name: gcp-credentials
               mountPath: /var/secrets/google
+              readOnly: true
+            - name: appconfig
+              mountPath: /app/static/appconfig.js
+              subPath: appconfig.js
               readOnly: true
           resources:
             requests:
@@ -54,3 +60,9 @@ spec:
             items:
               - key: gcp-sa-key.json
                 path: gcp-sa-key.json
+        - name: appconfig
+          secret:
+            secretName: colabri-secrets
+            items:
+              - key: appconfig.js
+                path: appconfig.js

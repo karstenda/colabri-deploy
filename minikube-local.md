@@ -8,6 +8,31 @@ This guide covers deploying the Colabri platform to Minikube for local developme
 - **kubectl** installed
 - **Docker** (or another container runtime)
 
+## Secrets
+
+The Minikube overlay reads sensitive values from two checked-in files:
+
+- `kubernetes/overlays/minikube-local/secrets.yaml`
+- `kubernetes/overlays/minikube-local/tls-secrets.yaml`
+
+Fetch both files from Secret Manager in the `colabri-local` GCP project **before** applying the overlay. Use the commands below as a template (replace the `--secret` value when targeting a different Secret Manager entry and update the output path depending on which file you are pulling):
+
+### Linux / macOS
+
+```bash
+cd src
+gcloud secrets versions access latest --secret="secrets_yaml" --format='get(payload.data)' | tr '_-' '/+' | base64 -d > kubernetes/overlays/minikube-local/secrets.yaml
+```
+
+### Windows
+
+```powershell
+cd src
+(gcloud secrets versions access latest --secret="secrets_yaml" --format='get(payload.data)') -replace '_', '/' -replace '-', '+' | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) } | Out-File kubernetes/overlays/minikube-local/secrets.yaml -Encoding UTF8
+```
+
+> Run the command again for the TLS secrets with output path `tls-secrets.yaml` and secret `tls-secrets_yaml`.
+
 ## Installation
 
 ### Install Minikube
@@ -38,13 +63,7 @@ winget install Kubernetes.kubectl
 
 ### 1. Start Minikube
 
-Start Minikube with appropriate resources:
-
-```powershell
-minikube start --cpus=4 --memory=8192 --driver=docker
-```
-
-Or use the default settings:
+Start Minikube:
 
 ```powershell
 minikube start

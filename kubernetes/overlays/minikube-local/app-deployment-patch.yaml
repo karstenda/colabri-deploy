@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: colabri-app
-          image: colabri-app:v0.0.1k
+          image: colabri-app:v0.0.1t
           imagePullPolicy: IfNotPresent
           env:
             - name: DB_URL
@@ -27,7 +27,9 @@ spec:
             - name: CLOUD_SERVICE_DOMAIN
               value: "app.colabri-local.cloud"
             - name: CLOUD_DOC_SERVICE_DOMAIN
-              value: "doc.colabri-local.cloud"
+              value: "colabri-doc-service"
+            - name: CLOUD_SPELL_SERVICE_DOMAIN
+              value: "colabri-spell-service"
             - name: CLOUD_ROOT_DOMAIN
               value: "colabri-local.cloud"
             - name: CLOUD_CORS_ORIGINS
@@ -41,6 +43,10 @@ spec:
           volumeMounts:
             - name: gcp-credentials
               mountPath: /var/secrets/google
+              readOnly: true
+            - name: appconfig
+              mountPath: /app/static/appconfig.js
+              subPath: appconfig.js
               readOnly: true
           resources:
             requests:
@@ -56,3 +62,9 @@ spec:
             items:
               - key: gcp-sa-key.json
                 path: gcp-sa-key.json
+        - name: appconfig
+          secret:
+            secretName: colabri-secrets
+            items:
+              - key: appconfig.js
+                path: appconfig.js

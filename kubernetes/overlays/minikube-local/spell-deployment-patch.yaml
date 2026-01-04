@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-spell
+  namespace: colabri
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: colabri-spell
+          image: colabri-spell:v0.0.1
+          imagePullPolicy: IfNotPresent

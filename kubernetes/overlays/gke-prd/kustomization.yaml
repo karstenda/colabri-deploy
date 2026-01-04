@@ -8,10 +8,12 @@ resources:
   - secrets.yaml
   - managed-certificate.yaml
   - doc-backend-config.yaml
+  - spell-serviceaccount.yaml
 
 patches:
   - path: app-deployment-patch.yaml
   - path: app-service-patch.yaml
   - path: doc-deployment-patch.yaml
   - path: doc-service-patch.yaml
+  - path: spell-deployment-patch.yaml
   - path: ingress-patch.yaml

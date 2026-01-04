@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-spell
+  namespace: colabri
+  labels:
+    app: colabri-spell
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: colabri-spell
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: colabri-spell
+        component: backend
+    spec:
+      containers:
+        - name: colabri-spell
+          # Based on: https://hub.docker.com/r/erikvl87/languagetool
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-spell:v0.0.1
+          ports:
+            - containerPort: 8010
+              name: http
+          env:
+            - name: Java_Xms
+              value: "512m"
+            - name: Java_Xmx
+              value: "1024m"
+          resources:
+            requests:
+              memory: "1280Mi"
+              cpu: "500m"
+            limits:
+              memory: "1792Mi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /v2/languages
+              port: 8010
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /v2/languages
+              port: 8010
+            initialDelaySeconds: 5
+            periodSeconds: 5

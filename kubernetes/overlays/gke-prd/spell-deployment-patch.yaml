@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-spell
+  namespace: colabri
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        gke-gcsfuse/volumes: "true"
+    spec:
+      serviceAccountName: colabri-spell
+      containers:
+        - name: colabri-spell
+          env:
+            - name: Java_Xms
+              value: "1024m"
+            - name: Java_Xmx
+              value: "2048m"
+            - name: langtool_languageModel
+              value: /ngrams
+          resources:
+            requests:
+              memory: "3Gi"
+              cpu: "1"
+            limits:
+              memory: "3.5Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: spell-dictionaries
+              mountPath: /ngrams
+              readOnly: true
+      volumes:
+        - name: spell-dictionaries
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
+            readOnly: true
+            volumeAttributes:
+              bucketName: "colabri-spell-ngrams"
+              mountOptions: "implicit-dirs,uid=1000,gid=1000"
