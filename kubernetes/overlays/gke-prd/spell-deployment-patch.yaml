@@ -15,17 +15,17 @@ spec:
         - name: colabri-spell
           env:
             - name: Java_Xms
-              value: "1024m"
+              value: "768m"
             - name: Java_Xmx
-              value: "2048m"
+              value: "1024m"
             - name: langtool_languageModel
               value: /ngrams
           resources:
             requests:
-              memory: "3Gi"
+              memory: "1.5Gi"
               cpu: "1"
             limits:
-              memory: "3.5Gi"
+              memory: "2Gi"
               cpu: "2"
           volumeMounts:
             - name: spell-dictionaries

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: colabri-app
-          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1r
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1v
           ports:
             - containerPort: 8080
               name: http
@@ -66,16 +66,26 @@ spec:
                 secretKeyRef:
                   name: colabri-secrets
                   key: oauth-web-app-client-secret
-            - name: OAUTH_API_CLIENT_ID
+            - name: OAUTH_API_DOMAIN
               valueFrom:
                 secretKeyRef:
                   name: colabri-secrets
-                  key: oauth-api-client-id
-            - name: OAUTH_API_CLIENT_SECRET
+                  key: oauth-api-domain
+            - name: OAUTH_API_APP_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: colabri-secrets
-                  key: oauth-api-client-secret
+                  key: oauth-api-app-client-id
+            - name: OAUTH_API_APP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-api-app-client-secret
+            - name: OAUTH_API_CONNECTION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: colabri-secrets
+                  key: oauth-api-connection-id
             - name: GCP_RECAPTCHA_SITE_KEY
               valueFrom:
                 secretKeyRef:
