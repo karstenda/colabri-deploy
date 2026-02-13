@@ -37,7 +37,7 @@ spec:
             - name: GCP_PROJECT_ID
               value: colabri-prd
             - name: GCP_SERVICE_ACCOUNT_KEY_PATH
-              value: /var/secrets/google/gcp-sa-key.json
+              value: /var/secrets/google/gcp-colabri-app-key.json
           volumeMounts:
             - name: gcp-credentials
               mountPath: /var/secrets/google
@@ -58,8 +58,8 @@ spec:
           secret:
             secretName: colabri-secrets
             items:
-              - key: gcp-sa-key.json
-                path: gcp-sa-key.json
+              - key: gcp-colabri-app-key.json
+                path: gcp-colabri-app-key.json
         - name: appconfig
           secret:
             secretName: colabri-secrets

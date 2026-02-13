@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ingress.yaml
+  - ai-deployment.yaml
+  - ai-service.yaml
   - app-deployment.yaml
   - app-service.yaml
   - doc-deployment.yaml

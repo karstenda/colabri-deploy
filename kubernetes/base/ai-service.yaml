@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: colabri-ai-service
+  namespace: colabri
+  labels:
+    app: colabri-ai
+spec:
+  type: ClusterIP
+  selector:
+    app: colabri-ai
+    component: backend
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http

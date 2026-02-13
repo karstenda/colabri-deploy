@@ -7,6 +7,7 @@ resources:
   - tls-secrets.yaml
 
 patches:
+  - path: ai-deployment-patch.yaml
   - path: app-deployment-patch.yaml
   - path: doc-deployment-patch.yaml
   - path: spell-deployment-patch.yaml

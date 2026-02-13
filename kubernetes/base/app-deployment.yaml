@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: colabri-app
-          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.1v
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-app:v0.0.2a
           ports:
             - containerPort: 8080
               name: http
@@ -45,6 +45,8 @@ spec:
               value: "colabri-doc-service"
             - name: CLOUD_SPELL_SERVICE_DOMAIN
               value: "colabri-spell-service"
+            - name: CLOUD_AI_SERVICE_DOMAIN
+              value: "colabri-ai-service"
             - name: CLOUD_ROOT_DOMAIN
               value: "colabri.cloud"
             - name: CLOUD_CORS_ORIGINS

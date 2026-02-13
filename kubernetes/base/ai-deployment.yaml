@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-ai
+  namespace: colabri
+  labels:
+    app: colabri-ai
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: colabri-ai
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: colabri-ai
+        component: backend
+    spec:
+      containers:
+        - name: colabri-ai
+          image: europe-west3-docker.pkg.dev/colabri-prd/colabri-gar/colabri-ai:v0.0.1b
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+            - name: GCP_VERTEX_MODEL
+              value: gemini-2.5-pro
+            - name: GCP_VERTEX_MODEL_LOCATION
+              value: europe-west1
+            - name: CLOUD_SERVICE_NAME
+              value: "colabri-ai"
+            - name: CLOUD_POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colabri-ai
+  namespace: colabri
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: colabri-ai
+          image: colabri-ai:v0.0.1a
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GCP_PROJECT_ID
+              value: colabri-local
+            - name: GCP_SERVICE_ACCOUNT_KEY_PATH
+              value: /var/secrets/google/gcp-colabri-ai-key.json
+          volumeMounts:
+            - name: gcp-credentials
+              mountPath: /var/secrets/google
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+      volumes:
+        - name: gcp-credentials
+          secret:
+            secretName: colabri-secrets
+            items:
+              - key: gcp-colabri-ai-key.json
+                path: gcp-colabri-ai-key.json

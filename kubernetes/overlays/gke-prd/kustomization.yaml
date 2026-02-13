@@ -11,6 +11,8 @@ resources:
   - spell-serviceaccount.yaml
 
 patches:
+  - path: ai-deployment-patch.yaml
+  - path: ai-service-patch.yaml
   - path: app-deployment-patch.yaml
   - path: app-service-patch.yaml
   - path: doc-deployment-patch.yaml
